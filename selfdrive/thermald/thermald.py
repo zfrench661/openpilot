@@ -204,8 +204,9 @@ def thermald_thread(end_event, hw_queue):
 
       # Set ignition based on any panda connected
       # onroad_conditions["ignition"] = any(ps.ignitionLine or ps.ignitionCan for ps in pandaStates if ps.pandaType != log.PandaState.PandaType.unknown)
-      onroad_conditions["ignition"] = (pandaStates[0].canState2.totalRxCnt - rx_count_last > 50)
-      rx_count_last = pandaStates[0].canState2.totalRxCnt
+      trc = pandaStates[0].canState0.totalRxCnt + pandaStates[0].canState1.totalRxCnt + pandaStates[0].canState2.totalRxCnt
+      onroad_conditions["ignition"] = (trc - rx_count_last > 50)
+      rx_count_last = trc
       # print('IG', onroad_conditions["ignition"])
 
       pandaState = pandaStates[0]
