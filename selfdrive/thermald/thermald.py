@@ -155,6 +155,7 @@ def thermald_thread(end_event, hw_queue):
   sm = messaging.SubMaster(["peripheralState", "gpsLocationExternal", "controlsState", "pandaStates"], poll=["pandaStates"])
 
   count = 0
+  rx_count_last = 0
 
   onroad_conditions: Dict[str, bool] = {
     "ignition": False,
@@ -202,7 +203,10 @@ def thermald_thread(end_event, hw_queue):
     if sm.updated['pandaStates'] and len(pandaStates) > 0:
 
       # Set ignition based on any panda connected
-      onroad_conditions["ignition"] = any(ps.ignitionLine or ps.ignitionCan for ps in pandaStates if ps.pandaType != log.PandaState.PandaType.unknown)
+      # onroad_conditions["ignition"] = any(ps.ignitionLine or ps.ignitionCan for ps in pandaStates if ps.pandaType != log.PandaState.PandaType.unknown)
+      onroad_conditions["ignition"] = (pandaStates[0].canState2.totalRxCnt - rx_count_last > 50)
+      rx_count_last = pandaStates[0].canState2.totalRxCnt
+      # print('IG', onroad_conditions["ignition"])
 
       pandaState = pandaStates[0]
 
