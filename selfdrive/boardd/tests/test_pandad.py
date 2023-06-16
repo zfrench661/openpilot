@@ -73,9 +73,6 @@ class TestPandad(unittest.TestCase):
 
   @phone_only
   def test_release_to_devel_bootstub(self):
-    if HARDWARE.get_device_type() != 'tici':
-      self.skipTest("TODO: fix reset timeout")
-
     # flash release bootstub
     self._go_to_dfu()
     pd = PandaDFU(None)
