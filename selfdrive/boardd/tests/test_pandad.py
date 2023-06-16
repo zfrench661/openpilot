@@ -64,7 +64,7 @@ class TestPandad(unittest.TestCase):
   def test_best_case_startup_time(self):
     # run once so we're setup
     managed_processes['pandad'].start()
-    self._wait_for_boardd()
+    self._wait_for_boardd(60)
     managed_processes['pandad'].stop()
 
     # should be fast this time
@@ -80,6 +80,9 @@ class TestPandad(unittest.TestCase):
     with open(fn, "rb") as f:
       pd.program_bootstub(f.read())
     pd.reset()
+
+    # TODO: why is this necessary?
+    #HARDWARE.reset_internal_panda()
 
     assert Panda.wait_for_panda(None, 20)
     with Panda() as p:
