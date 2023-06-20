@@ -77,6 +77,8 @@ function launch {
   # write tmux scrollback to a file
   tmux capture-pane -pq -S-1000 > /tmp/launch_log
 
+  echo "$(date)" >> /data/onroad_reboot_log
+
   # start manager
   cd selfdrive/manager
   ./build.py && ./manager.py
