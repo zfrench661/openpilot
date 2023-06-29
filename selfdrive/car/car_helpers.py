@@ -132,7 +132,7 @@ def fingerprint(logcan, sendcan, num_pandas):
 
   # drain CAN socket so we always get the latest messages
   messaging.drain_sock_raw(logcan)
-
+  done = True
   while not done:
     a = get_one_can(logcan)
 
