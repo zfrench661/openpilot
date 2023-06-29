@@ -254,7 +254,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   power_layout->addWidget(reboot_btn);
   QObject::connect(reboot_btn, &QPushButton::clicked, this, &DevicePanel::reboot);
 
-  QPushButton *poweroff_btn = new QPushButton(tr("Power Off"));
+  QPushButton *poweroff_btn = new QPushButton(tr("Ignition On"));
   poweroff_btn->setObjectName("poweroff_btn");
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, this, &DevicePanel::poweroff);
@@ -310,16 +310,17 @@ void DevicePanel::reboot() {
 }
 
 void DevicePanel::poweroff() {
-  if (!uiState()->engaged()) {
-    if (ConfirmationDialog::confirm(tr("Are you sure you want to power off?"), tr("Power Off"), this)) {
-      // Check engaged again in case it changed while the dialog was open
-      if (!uiState()->engaged()) {
-        Params().putBool("DoShutdown", true);
-      }
-    }
-  } else {
-    ConfirmationDialog::alert(tr("Disengage to Power Off"), this);
-  }
+  // if (!uiState()->engaged()) {
+  //   if (ConfirmationDialog::confirm(tr("Are you sure you want to power off?"), tr("Power Off"), this)) {
+  //     // Check engaged again in case it changed while the dialog was open
+  //     if (!uiState()->engaged()) {
+  //       Params().putBool("DoShutdown", true);
+  //     }
+  //   }
+  // } else {
+  //   ConfirmationDialog::alert(tr("Disengage to Power Off"), this);
+  // }
+  params.putBool("IgnitionOn", true);
 }
 
 void SettingsWindow::showEvent(QShowEvent *event) {

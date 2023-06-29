@@ -468,9 +468,11 @@ void panda_state_thread(PubMaster *pm, std::vector<Panda *> pandas, bool spoofin
   while (!do_exit && check_all_connected(pandas)) {
     uint64_t start_time = nanos_since_boot();
 
+    bool param_ignition = params.getBool("IgnitionOn");
+
     // send out peripheralState
     send_peripheral_state(pm, peripheral_panda);
-    auto ignition_opt = send_panda_states(pm, pandas, spoofing_started);
+    auto ignition_opt = send_panda_states(pm, pandas, (spoofing_started || param_ignition));
 
     if (!ignition_opt) {
       continue;

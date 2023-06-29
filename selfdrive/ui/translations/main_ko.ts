@@ -223,7 +223,7 @@
     </message>
     <message>
         <source>Power Off</source>
-        <translation>전원 종료</translation>
+        <translation type="vanished">전원 종료</translation>
     </message>
     <message>
         <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
@@ -259,11 +259,11 @@
     </message>
     <message>
         <source>Are you sure you want to power off?</source>
-        <translation>전원을 종료하시겠습니까?</translation>
+        <translation type="vanished">전원을 종료하시겠습니까?</translation>
     </message>
     <message>
         <source>Disengage to Power Off</source>
-        <translation>전원을 종료하려면 해제하세요</translation>
+        <translation type="vanished">전원을 종료하려면 해제하세요</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -272,6 +272,10 @@
     <message>
         <source>Review</source>
         <translation>다시보기</translation>
+    </message>
+    <message>
+        <source>Ignition On</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

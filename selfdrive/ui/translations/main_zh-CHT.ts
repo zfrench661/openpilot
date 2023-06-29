@@ -223,7 +223,7 @@
     </message>
     <message>
         <source>Power Off</source>
-        <translation>關機</translation>
+        <translation type="vanished">關機</translation>
     </message>
     <message>
         <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
@@ -259,11 +259,11 @@
     </message>
     <message>
         <source>Are you sure you want to power off?</source>
-        <translation>您確定您要關機嗎？</translation>
+        <translation type="vanished">您確定您要關機嗎？</translation>
     </message>
     <message>
         <source>Disengage to Power Off</source>
-        <translation>請先取消控車才能關機</translation>
+        <translation type="vanished">請先取消控車才能關機</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -272,6 +272,10 @@
     <message>
         <source>Review</source>
         <translation>回顧</translation>
+    </message>
+    <message>
+        <source>Ignition On</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

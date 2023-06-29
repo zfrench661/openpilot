@@ -223,7 +223,7 @@
     </message>
     <message>
         <source>Power Off</source>
-        <translation>Ausschalten</translation>
+        <translation type="vanished">Ausschalten</translation>
     </message>
     <message>
         <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
@@ -259,11 +259,11 @@
     </message>
     <message>
         <source>Are you sure you want to power off?</source>
-        <translation>Bist du sicher, dass du das Gerät ausschalten möchtest?</translation>
+        <translation type="vanished">Bist du sicher, dass du das Gerät ausschalten möchtest?</translation>
     </message>
     <message>
         <source>Disengage to Power Off</source>
-        <translation>Zum Ausschalten deaktivieren</translation>
+        <translation type="vanished">Zum Ausschalten deaktivieren</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -272,6 +272,10 @@
     <message>
         <source>Review</source>
         <translation>Überprüfen</translation>
+    </message>
+    <message>
+        <source>Ignition On</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

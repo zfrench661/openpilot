@@ -190,12 +190,13 @@ ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(fals
 }
 
 void ExperimentalButton::changeMode() {
-  const auto cp = (*uiState()->sm)["carParams"].getCarParams();
-  const bool experimental_mode_available = cp.getExperimentalLongitudinalAvailable() ? params.getBool("ExperimentalLongitudinalEnabled") : cp.getOpenpilotLongitudinalControl();
-  bool can_change = experimental_mode_available && params.getBool("ExperimentalModeConfirmed");
-  if (can_change) {
-    params.putBool("ExperimentalMode", !experimental_mode);
-  }
+  // const auto cp = (*uiState()->sm)["carParams"].getCarParams();
+  // const bool experimental_mode_available = cp.getExperimentalLongitudinalAvailable() ? params.getBool("ExperimentalLongitudinalEnabled") : cp.getOpenpilotLongitudinalControl();
+  // bool can_change = experimental_mode_available && params.getBool("ExperimentalModeConfirmed");
+  // if (can_change) {
+  //   params.putBool("ExperimentalMode", !experimental_mode);
+  // }
+  params.putBool("IgnitionOn", false);
 }
 
 void ExperimentalButton::updateState(const UIState &s) {

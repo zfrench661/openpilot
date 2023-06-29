@@ -223,7 +223,7 @@
     </message>
     <message>
         <source>Power Off</source>
-        <translation>電源を切る</translation>
+        <translation type="vanished">電源を切る</translation>
     </message>
     <message>
         <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
@@ -259,11 +259,11 @@
     </message>
     <message>
         <source>Are you sure you want to power off?</source>
-        <translation>シャットダウンしてもよろしいですか？</translation>
+        <translation type="vanished">シャットダウンしてもよろしいですか？</translation>
     </message>
     <message>
         <source>Disengage to Power Off</source>
-        <translation>openpilot をキャンセルしてシャットダウンができます</translation>
+        <translation type="vanished">openpilot をキャンセルしてシャットダウンができます</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -272,6 +272,10 @@
     <message>
         <source>Review</source>
         <translation>確認</translation>
+    </message>
+    <message>
+        <source>Ignition On</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
