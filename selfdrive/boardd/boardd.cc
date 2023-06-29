@@ -115,32 +115,8 @@ bool safety_setter_thread(std::vector<Panda *> pandas) {
   }
 
   // initialize to ELM327 without OBD multiplexing for fingerprinting
-  bool obd_multiplexing_enabled = false;
   for (int i = 0; i < pandas.size(); i++) {
-    pandas[i]->set_safety_model(cereal::CarParams::SafetyModel::ELM327, 1U);
-  }
-
-  // openpilot can switch between multiplexing modes for different FW queries
-  while (true) {
-    if (do_exit || !check_all_connected(pandas) || !ignition) {
-      return false;
-    }
-
-    bool obd_multiplexing_requested = p.getBool("ObdMultiplexingEnabled");
-    if (obd_multiplexing_requested != obd_multiplexing_enabled) {
-      for (int i = 0; i < pandas.size(); i++) {
-        const uint16_t safety_param = (i > 0 || !obd_multiplexing_requested) ? 1U : 0U;
-        pandas[i]->set_safety_model(cereal::CarParams::SafetyModel::ELM327, safety_param);
-      }
-      obd_multiplexing_enabled = obd_multiplexing_requested;
-      p.putBool("ObdMultiplexingChanged", true);
-    }
-
-    if (p.getBool("FirmwareQueryDone")) {
-      LOGW("finished FW query");
-      break;
-    }
-    util::sleep_for(20);
+    pandas[i]->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT, 0U);
   }
 
   std::string params;
@@ -180,7 +156,11 @@ bool safety_setter_thread(std::vector<Panda *> pandas) {
 
     LOGW("panda %d: setting safety model: %d, param: %d, alternative experience: %d", i, (int)safety_model, safety_param, alternative_experience);
     panda->set_alternative_experience(alternative_experience);
-    panda->set_safety_model(safety_model, safety_param);
+    // panda->set_safety_model(safety_model, safety_param);
+
+    // Force into passthrough mode
+    LOGW("Seting passthrough safety mode");
+    panda->set_safety_model(cereal::CarParams::SafetyModel::ALL_OUTPUT, 1U);
   }
 
   return true;
