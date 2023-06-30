@@ -143,11 +143,12 @@ bool safety_setter_thread(std::vector<Panda *> pandas) {
   auto safety_configs = car_params.getSafetyConfigs();
   uint16_t alternative_experience = car_params.getAlternativeExperience();
   for (uint32_t i = 0; i < pandas.size(); i++) {
+    if (i == 0) continue; // skip internal panda
     auto panda = pandas[i];
 
-    if (safety_configs.size() > i) {
-      safety_model = safety_configs[i].getSafetyModel();
-      safety_param = safety_configs[i].getSafetyParam();
+    if (safety_configs.size() > i && i != 0) {
+      safety_model = cereal::CarParams::SafetyModel::ALL_OUTPUT;
+      safety_param = 1U;
     } else {
       // If no safety mode is specified, default to silent
       safety_model = cereal::CarParams::SafetyModel::SILENT;
@@ -156,11 +157,10 @@ bool safety_setter_thread(std::vector<Panda *> pandas) {
 
     LOGW("panda %d: setting safety model: %d, param: %d, alternative experience: %d", i, (int)safety_model, safety_param, alternative_experience);
     panda->set_alternative_experience(alternative_experience);
-    // panda->set_safety_model(safety_model, safety_param);
+    panda->set_safety_model(safety_model, safety_param);
 
     // Force into passthrough mode
-    LOGW("Seting passthrough safety mode");
-    panda->set_safety_model(cereal::CarParams::SafetyModel::ALL_OUTPUT, 1U);
+    // panda->set_safety_model(cereal::CarParams::SafetyModel::ALL_OUTPUT, 1U);
   }
 
   return true;
