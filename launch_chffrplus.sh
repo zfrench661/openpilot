@@ -14,6 +14,12 @@ function agnos_init {
     sleep 3
   fi
 
+  if ! mountpoint /cache; then
+    yes | sudo mkfs.ext4 /dev/disk/by-partlabel/cache
+    sync
+    sudo reboot
+  fi
+
   # TODO: move this to agnos
   sudo rm -f /data/etc/NetworkManager/system-connections/*.nmmeta
 
