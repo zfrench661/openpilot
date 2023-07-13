@@ -16,7 +16,7 @@
 #define TEMPORAL
 #define DESIRE
 #define TRAFFIC_CONVENTION
-#define NAV
+// #define NAV
 
 constexpr int FEATURE_LEN = 128;
 constexpr int HISTORY_BUFFER_LEN = 99;
