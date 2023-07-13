@@ -37,7 +37,7 @@ constexpr int LEAD_TRAJ_LEN = 6;
 constexpr int LEAD_PRED_DIM = 4;
 constexpr int LEAD_MHP_SELECTION = 3;
 // Padding to get output shape as multiple of 4
-constexpr int PAD_SIZE = 2;
+constexpr int PAD_SIZE = 0;
 
 struct ModelOutputXYZ {
   float x;
@@ -231,6 +231,12 @@ struct ModelOutputMeta {
 };
 static_assert(sizeof(ModelOutputMeta) == sizeof(ModelOutputDesireProb) + sizeof(float) + (sizeof(ModelOutputDisengageProb)*DISENGAGE_LEN) + (sizeof(ModelOutputBlinkerProb)*BLINKER_LEN) + (sizeof(ModelOutputDesireProb)*DESIRE_PRED_LEN));
 
+struct ModelOutputCurv {
+  float v;
+  float std;
+};
+static_assert(sizeof(ModelOutputCurv) == sizeof(float)*2);
+
 struct ModelOutputFeatures {
   std::array<float, FEATURE_LEN> feature;
 };
@@ -246,6 +252,7 @@ struct ModelOutput {
   const ModelOutputWideFromDeviceEuler wide_from_device_euler;
   const ModelOutputTemporalPose temporal_pose;
   const ModelOutputRoadTransform road_transform;
+  const ModelOutputCurv curv;
 };
 
 constexpr int OUTPUT_SIZE = sizeof(ModelOutput) / sizeof(float);

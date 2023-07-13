@@ -379,6 +379,7 @@ void fill_model(ModelState* s, cereal::ModelDataV2::Builder &framed, const Model
   }
 
   fill_plan(framed, best_plan);
+  framed.setModelCurv(net_outputs.curv.v);
   fill_lane_lines(framed, plan_t, net_outputs.lane_lines);
   fill_road_edges(framed, plan_t, net_outputs.road_edges);
 
