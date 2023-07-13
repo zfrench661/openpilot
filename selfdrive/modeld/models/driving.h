@@ -37,7 +37,7 @@ constexpr int LEAD_TRAJ_LEN = 6;
 constexpr int LEAD_PRED_DIM = 4;
 constexpr int LEAD_MHP_SELECTION = 3;
 // Padding to get output shape as multiple of 4
-constexpr int PAD_SIZE = 0;
+constexpr int PAD_SIZE = 4;
 
 struct ModelOutputXYZ {
   float x;
