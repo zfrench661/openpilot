@@ -29,6 +29,8 @@ def awake_face_msg():
     dat.bodyFace = log.BodyFace.awake
     return dat 
 
+{'label': 'person', 'location': {'height': 44.655364990234375, 'width': 21.4017333984375, 'x': 279.86962890625, 'y': 81.7782211303711}, 'score': 0.7005926966667175}
+
 def run_loop():
     pm = messaging.PubMaster(['testJoystick', 'bodyFace'])
     sm = messaging.SubMaster(['logMessage'])
@@ -40,13 +42,18 @@ def run_loop():
             continue
 
         log_msg = json.loads(sm["logMessage"])
+        code, data = log_msg["code"], log_msg["data"]
+        if code != 0:
+            continue
+
         cmd_msg, face_msg = None, None
         assert type(log_msg) == list
-        person_msg = next((msg for msg in log_msg if msg["pred_class"] == "person"), None)
+        person_msg = next((msg for msg in data if msg["label"] == "person"), None)
         if person_msg == None:
             face_msg = asleep_face_msg()
         else:
-            pt1, pt2 = person_msg["pt1"], person_msg["pt2"]
+            pt1 = person_msg["location"]["x"], person_msg["location"]["y"]
+            pt2 = person_msg["location"]["x"] + person_msg["location"]["width"], person_msg["location"]["y"] + person_msg["location"]["height"]
             pt1 = (pt1[0] / IMAGE_WIDTH, pt1[1] / IMAGE_HEIGHT)
             pt2 = (pt2[0] / IMAGE_WIDTH, pt2[1] / IMAGE_HEIGHT)
             
