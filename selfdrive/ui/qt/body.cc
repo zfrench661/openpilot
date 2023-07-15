@@ -140,8 +140,15 @@ void BodyWindow::updateState(const UIState &s) {
   fuel_filter.update(cs.getFuelGauge());
 
   // TODO: use carState.standstill when that's fixed
-  const bool standstill = std::abs(cs.getVEgo()) < 0.01;
-  QMovie *m = standstill ? sleep : awake;
+  // const bool standstill = std::abs(cs.getVEgo()) < 0.01;
+  QMovie *m;
+  if (sm.updated("bodyFace")) {
+    m = (sm["bodyFace"].getBodyFace() == cereal::BodyFace::SLEEP) ? sleep : awake;
+  } else {
+    const bool standstill = std::abs(cs.getVEgo()) < 0.01;
+    m = standstill ? sleep : awake;
+  }
+
   if (m != face->movie()) {
     face->setMovie(m);
     face->movie()->start();
