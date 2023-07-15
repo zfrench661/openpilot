@@ -56,7 +56,8 @@ def run_loop():
             pt2 = person_msg["location"]["x"] + person_msg["location"]["width"], person_msg["location"]["y"] + person_msg["location"]["height"]
             pt1 = (pt1[0] / IMAGE_WIDTH, pt1[1] / IMAGE_HEIGHT)
             pt2 = (pt2[0] / IMAGE_WIDTH, pt2[1] / IMAGE_HEIGHT)
-            
+            print("pt1:", pt1, "pt2:", pt2)
+
             center_x = (pt1[0] + pt2[0]) / 2
             rect_width = abs(pt1[0] - pt2[0])
             face_msg = awake_face_msg()
@@ -67,6 +68,7 @@ def run_loop():
                 cmd_msg = get_control_command(0, 1)
             else:
                 cmd_msg = get_control_command(0, -1)
+            print("Messages:", cmd_msg is None, face_msg is None)
 
         if cmd_msg is not None:
             pm.send('testJoystick', cmd_msg)
