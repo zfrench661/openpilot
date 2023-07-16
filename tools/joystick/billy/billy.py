@@ -85,7 +85,7 @@ def photo():
   take_snapshot(filename)
   print_snapshot(filename)
 
-  return BillyState.IDLE
+  return BillyState.STOPPED
 
 def joke():
   output_path = talk(2)

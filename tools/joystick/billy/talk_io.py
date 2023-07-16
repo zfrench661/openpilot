@@ -14,7 +14,7 @@ assert openai_key and elevenlabs_key
 openai.api_key = openai_key
 set_api_key(elevenlabs_key)
 
-MIC_DEVICE_INDEX = 37
+MIC_DEVICE_INDEX = 0
 
 ACTIONS = {
     1: 'take photo',
@@ -34,8 +34,19 @@ TALKING = {
 }
 
 def initialize_audio():
-  global audio
+  global audio, MIC_DEVICE_INDEX
   audio = pyaudio.PyAudio()
+
+  info = audio.get_host_api_info_by_index(0)
+  numdevices = info.get('deviceCount')
+  for i in range(0, numdevices):
+    if (audio.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')) > 0:
+      if audio.get_device_info_by_host_api_device_index(0, i).get('name') == 'default':
+        MIC_DEVICE_INDEX = i
+        print(f"MIC_DEVICE_INDEX = {i}")
+        break
+
+  assert MIC_DEVICE_INDEX != 0
 
 def terminate_audio():
   audio.terminate()
