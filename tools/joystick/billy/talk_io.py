@@ -33,6 +33,13 @@ TALKING = {
   4: """Okay! I will just sit here and do nothing."""
 }
 
+def initialize_audio():
+  global audio
+  audio = pyaudio.PyAudio()
+
+def terminate_audio():
+  audio.terminate()
+
 def record_audio(index=0, output_file_name="recordedFile.wav",
                  max_record_seconds=10, no_voice_threshold=100,
                  voice_threshold=300, verbose=True):
@@ -41,7 +48,6 @@ def record_audio(index=0, output_file_name="recordedFile.wav",
   RATE = 44100
   CHUNK = 512
 
-  audio = pyaudio.PyAudio()
   stream = audio.open(format=FORMAT, channels=CHANNELS,
                 rate=RATE, input=True,
                 frames_per_buffer=CHUNK)
@@ -72,7 +78,6 @@ def record_audio(index=0, output_file_name="recordedFile.wav",
 
   stream.stop_stream()
   stream.close()
-  audio.terminate()
 
   waveFile = wave.open(output_file_name, 'wb')
   waveFile.setnchannels(CHANNELS)

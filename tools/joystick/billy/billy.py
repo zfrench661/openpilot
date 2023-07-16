@@ -1,4 +1,4 @@
-from talk_io import talk, play_sound, record_audio, audio_transcribe, chat_completion, MIC_DEVICE_INDEX, ACTIONS
+from talk_io import talk, play_sound, record_audio, audio_transcribe, chat_completion, initialize_audio, terminate_audio, MIC_DEVICE_INDEX, ACTIONS
 from moving import find_and_follow_human
 from enum import Enum
 import time
@@ -68,7 +68,7 @@ def photo():
   output_path = talk(1)
   play_sound(output_path)
   send_body_status(1)
-  time.sleep(6.7)
+  time.sleep(6)
   send_body_status(0)
   take_snapshot()
 
@@ -106,7 +106,9 @@ billy_functions = {
 
 
 if __name__ == "__main__":
-  billy_state = BillyState.PHOTO
+  send_body_status(0)
+  initialize_audio()
+  billy_state = BillyState.STOPPED
 
   if not vipc_client.is_connected():
     vipc_client.connect(True)
@@ -114,6 +116,8 @@ if __name__ == "__main__":
   while True:
     print(billy_state)
     billy_state = billy_functions[billy_state]()
-    time.sleep(1)
+    time.sleep(0.1)
     if billy_state == BillyState.IDLE:
       break
+
+  terminate_audio()
