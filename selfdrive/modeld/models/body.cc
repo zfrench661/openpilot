@@ -13,6 +13,8 @@
 #include "common/timing.h"
 #include "common/swaglog.h"
 
+#include "selfdrive/modeld/models/driving.h"
+
 // #define DUMP_YUV
 
 void bodymodel_init(BodyModelState* s, cl_device_id device_id, cl_context context) {
@@ -56,6 +58,11 @@ void bodymodel_publish(PubMaster &pm, uint32_t frame_id, BodyModelResult &model_
   event.setLogMessage(res.c_str());
 
   pm.send("logMessage", msg);
+
+  ModelState s;
+  ModelOutput *o = (ModelOutput*)&s.output;
+  model_publish(pm, frame_id, frame_id, frame_id, 0, *o, nanos_since_boot(), 0.002, kj::ArrayPtr<const float>(s.output.data(), s.output.size()), true);
+  posenet_publish(pm, frame_id, 0, *o, nanos_since_boot(), true);
 }
 
 void bodymodel_free(BodyModelState* s) {

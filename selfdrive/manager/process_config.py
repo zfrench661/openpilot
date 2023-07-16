@@ -37,7 +37,7 @@ procs = [
   NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
   NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
   NativeProcess("proclogd", "system/proclogd", ["./proclogd"]),
-  PythonProcess("logmessaged", "system.logmessaged", offroad=True, callback=iscar),
+  PythonProcess("logmessaged", "system.logmessaged", offroad=True, callback=iscar, enabled=False),
   PythonProcess("micd", "system.micd", callback=iscar),
   PythonProcess("timezoned", "system.timezoned", enabled=not PC, offroad=True),
 
@@ -58,7 +58,7 @@ procs = [
   PythonProcess("torqued", "selfdrive.locationd.torqued"),
   PythonProcess("controlsd", "selfdrive.controls.controlsd"),
   PythonProcess("deleter", "system.loggerd.deleter", offroad=True),
-  PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", enabled=False, callback=driverview),
+  PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", enabled=(not PC or WEBCAM), callback=driverview),
   PythonProcess("laikad", "selfdrive.locationd.laikad"),
   PythonProcess("rawgpsd", "system.sensord.rawgps.rawgpsd", enabled=TICI, onroad=False, callback=qcomgps),
   PythonProcess("navd", "selfdrive.navd.navd"),
