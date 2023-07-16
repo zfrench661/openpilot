@@ -18,14 +18,14 @@ MIC_DEVICE_INDEX = 37
 
 ACTIONS = {
     1: 'take photo',
-    2: 'tell a joke',
+    # 2: 'tell a joke',
     3: 'play a song',
     4: 'none of the above'
 }
 
 TALKING = {
-  0: """Hi! My name is Billy, nice to meet you! I can do some basic things,
-  take photos, tell a joke, or play a song. What do you Want me to Do?""",
+  0: """Hi! My name is Billy, nice to meet you! I can do some fun things,
+  take photos or play a song. What do you Want me to Do?""",
 
   1: """Awesome! Let's take a photo! Smile!""",
   2: """Okay! Here is a joke for you, I hope it makes you laugh.""",
