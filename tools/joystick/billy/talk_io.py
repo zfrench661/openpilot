@@ -14,18 +14,18 @@ assert openai_key and elevenlabs_key
 openai.api_key = openai_key
 set_api_key(elevenlabs_key)
 
-MIC_DEVICE_INDEX = 0
+MIC_DEVICE_INDEX = 37
 
 ACTIONS = {
     1: 'take photo',
-    2: 'tell a joke',
+    # 2: 'tell a joke',
     3: 'play a song',
     4: 'none of the above'
 }
 
 TALKING = {
-  0: """Hi! My name is Billy, nice to meet you! I can do some basic things,
-  take photos, tell a joke, or play a song. What do you Want me to Do?""",
+  0: """Hi! My name is Billy, nice to meet you! I can do some fun things,
+  take photos or play a song. What do you Want me to Do?""",
 
   1: """Awesome! Let's take a photo! Smile!""",
   2: """Okay! Here is a joke for you, I hope it makes you laugh.""",
@@ -50,7 +50,7 @@ def record_audio(index=0, output_file_name="recordedFile.wav",
 
   stream = audio.open(format=FORMAT, channels=CHANNELS,
                 rate=RATE, input=True,
-                frames_per_buffer=CHUNK)
+                frames_per_buffer=CHUNK, input_device_index=MIC_DEVICE_INDEX)
 
   if verbose: print ("recording started")
   Recordframes = []
