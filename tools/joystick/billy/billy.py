@@ -1,7 +1,9 @@
 from talk_io import talk, play_sound, record_audio, audio_transcribe, chat_completion, initialize_audio, terminate_audio, MIC_DEVICE_INDEX, ACTIONS
 from moving import find_and_follow_human
 from enum import Enum
+import os
 import time
+import multiprocessing
 import cereal.messaging as messaging
 from cereal.visionipc import VisionIpcClient, VisionStreamType
 from system.camerad.snapshot.snapshot import extract_image, jpeg_write
@@ -58,10 +60,17 @@ def send_body_status(res):
   msg.bodyStatus = res
   pm.send('bodyStatus', msg)
 
-def take_snapshot():
+def take_snapshot(filename):
   img = vipc_client.recv()
   img = extract_image(img.flatten(), vipc_client.width, vipc_client.height, vipc_client.stride, vipc_client.uv_offset)
-  jpeg_write('/data/openpilot/billy.jpg', img)
+  jpeg_write(filename, img)
+
+def print_snapshot(filename):
+  printer_ip = os.environ["PRINTER_ADDR"]
+  os.system(f"ipptool -tv -f {filename} {printer_ip} /data/openpilot/tools/joystick/billy/printjob.ipp")
+
+def play_song():
+  play_sound('/data/openpilot/tools/joystick/billy/zelda.mp3')
 
 
 def photo():
@@ -70,7 +79,10 @@ def photo():
   send_body_status(1)
   time.sleep(6)
   send_body_status(0)
-  take_snapshot()
+
+  filename = '/data/openpilot/snapshot.jpg'
+  take_snapshot(filename)
+  print_snapshot(filename)
 
   return BillyState.IDLE
 
@@ -82,6 +94,12 @@ def joke():
 def song():
   output_path = talk(3)
   play_sound(output_path)
+
+  p = multiprocessing.Process(target=play_song, args=())
+  p.start()
+  time.sleep(8)
+  p.join()
+
   return BillyState.STOPPED
 
 def nothing():

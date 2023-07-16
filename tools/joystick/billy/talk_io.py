@@ -14,7 +14,7 @@ assert openai_key and elevenlabs_key
 openai.api_key = openai_key
 set_api_key(elevenlabs_key)
 
-MIC_DEVICE_INDEX = 0
+MIC_DEVICE_INDEX = 37
 
 ACTIONS = {
     1: 'take photo',
@@ -50,7 +50,7 @@ def record_audio(index=0, output_file_name="recordedFile.wav",
 
   stream = audio.open(format=FORMAT, channels=CHANNELS,
                 rate=RATE, input=True,
-                frames_per_buffer=CHUNK)
+                frames_per_buffer=CHUNK, input_device_index=MIC_DEVICE_INDEX)
 
   if verbose: print ("recording started")
   Recordframes = []
