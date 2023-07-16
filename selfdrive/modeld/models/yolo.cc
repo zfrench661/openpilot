@@ -89,10 +89,6 @@ std::string parse_yolo_outputs(float *output) {
     int rows = size / dimensions; //25200
     int confidenceIndex = 4;
     int labelStartIndex = 5;
-    float modelWidth = 640.0;
-    float modelHeight = 640.0;
-    float xGain = modelWidth / 640;
-    float yGain = modelHeight / 416;
 
     std::vector<Vec4f> locations;
     std::vector<int> labels;
@@ -115,10 +111,10 @@ std::string parse_yolo_outputs(float *output) {
         for (int k = labelStartIndex; k < dimensions; ++k) {
             if (output[index+k] <= 0.5f) continue;
 
-            location[0] = (output[index] - output[index+2] / 2) / xGain; // top left x
-            location[1] = (output[index + 1] - output[index+3] / 2) / yGain; // top left y
-            location[2] = (output[index] + output[index+2] / 2) / xGain; // bottom right x
-            location[3] = (output[index + 1] + output[index+3] / 2) / yGain; // bottom right y
+            location[0] = (output[index] - output[index+2] / 2); // top left x
+            location[1] = (output[index + 1] - output[index+3] / 2); // top left y
+            location[2] = (output[index] + output[index+2] / 2); // bottom right x
+            location[3] = (output[index + 1] + output[index+3] / 2); // bottom right y
 
             locations.emplace_back(location);
 
