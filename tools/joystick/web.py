@@ -43,8 +43,8 @@ async def control_body(data, app):
     return
   if (data['type'] == 'control_command') and (app['mutable_vals']['prev_command'] == [data['x'], data['y']] and data['x'] == 0 and data['y'] == 0):
     return
-  
-  
+
+
   print(data)
   x = max(-1.0, min(1.0, data['x']))
   y = max(-1.0, min(1.0, data['y']))
@@ -56,7 +56,7 @@ async def control_body(data, app):
   if (data['type'] == 'control_command'):
     app['mutable_vals']['last_override_time'] = now
     app['mutable_vals']['prev_command'] = [data['x'], data['y']]
-    
+
 
 
 async def dummy_controls_msg(app):
