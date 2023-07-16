@@ -127,7 +127,7 @@ billy_functions = {
 if __name__ == "__main__":
   send_body_status(0)
   initialize_audio()
-  billy_state = BillyState.STOPPED
+  billy_state = BillyState.SEEKING
 
   if not vipc_client.is_connected():
     vipc_client.connect(True)

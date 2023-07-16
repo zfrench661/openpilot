@@ -11,6 +11,7 @@ PERSON_WIDTH_TARGET = 0.4
 PERSON_HEIGHT_TARGET = 0.55
 IDLE_CNT_TARGET = 20
 YOLO_MIN_CONF = 0.7
+NO_HUMAN_THRESH = 40
 
 def get_control_command(x, y):
     x = max(-1.0, min(1.0, x))
@@ -28,6 +29,7 @@ def find_and_follow_human():
 
     follow_active = True
     idle_cnt = 0
+    no_human_cnt = 0
     while follow_active:
         sm.update(50)
         if not sm.updated["logMessage"]:
@@ -42,6 +44,7 @@ def find_and_follow_human():
         cmd_msg = None
         people_msgs = [msg for msg in data if msg["label"] == "person" and msg["score"] > YOLO_MIN_CONF]
         if len(people_msgs) != 0:
+            no_human_cnt = 0
             person_msg = max(people_msgs, key=lambda a: a["location"]["height"])
             # TODO take person closest to center
             print("found a person")
@@ -71,6 +74,10 @@ def find_and_follow_human():
             else:
                 idle_cnt = 0
             print("Messages:", cmd_msg is None)
+        else:
+          no_human_cnt += 1
+          if no_human_cnt > NO_HUMAN_THRESH:
+            cmd_msg = get_control_command(0, -1)
 
         print("cmd_msg:", cmd_msg is not None)
         if cmd_msg is not None:
