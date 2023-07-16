@@ -1,4 +1,5 @@
 from talk_io import talk, play_sound, record_audio, audio_transcribe, chat_completion, MIC_DEVICE_INDEX, ACTIONS
+from moving import find_and_follow_human
 from enum import Enum
 import time
 import cereal.messaging as messaging
@@ -31,6 +32,10 @@ def listening():
   transcript = audio_transcribe(verbose=True, output_file_name=output_file_name)
   return BillyState.THINKING
 
+def seeking():
+  find_and_follow_human()
+  return BillyState.STOPPED
+
 def thinking():
   action = chat_completion(transcript)
   print(ACTIONS[action])
@@ -55,10 +60,7 @@ def photo():
   output_path = talk(1)
   play_sound(output_path)
   send_body_status(1)
-  time.sleep(5.2)
-
-
-
+  time.sleep(6.7)
   send_body_status(0)
   return BillyState.IDLE
 
@@ -81,6 +83,7 @@ def idle():
   return BillyState.IDLE
 
 billy_functions = {
+  BillyState.SEEKING: seeking,
   BillyState.STOPPED: stopped,
   BillyState.LISTENING: listening,
   BillyState.THINKING: thinking,
@@ -93,7 +96,7 @@ billy_functions = {
 
 
 if __name__ == "__main__":
-  billy_state = BillyState.STOPPED
+  billy_state = BillyState.PHOTO
 
   while True:
     print(billy_state)

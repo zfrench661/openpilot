@@ -43,7 +43,7 @@ def find_and_follow_human():
         people_msgs = [msg for msg in data if msg["label"] == "person" and msg["score"] > YOLO_MIN_CONF]
         if len(people_msgs) != 0:
             person_msg = max(people_msgs, key=lambda a: a["location"]["height"])
-            # TODO take person closest to center 
+            # TODO take person closest to center
             print("found a person")
             pt1 = person_msg["location"]["x"], person_msg["location"]["y"]
             pt2 = person_msg["location"]["x"] + person_msg["location"]["width"], person_msg["location"]["y"] + person_msg["location"]["height"]
