@@ -3,8 +3,11 @@ from moving import find_and_follow_human
 from enum import Enum
 import time
 import cereal.messaging as messaging
+from cereal.visionipc import VisionIpcClient, VisionStreamType
+from system.camerad.snapshot.snapshot import extract_image, jpeg_write
 
 pm = messaging.PubMaster(['bodyStatus'])
+vipc_client = VisionIpcClient("camerad", VisionStreamType.VISION_STREAM_DRIVER, True)
 
 class BillyState(Enum):
   IDLE = 0
@@ -55,6 +58,11 @@ def send_body_status(res):
   msg.bodyStatus = res
   pm.send('bodyStatus', msg)
 
+def take_snapshot():
+  img = vipc_client.recv()
+  img = extract_image(img.flatten(), vipc_client.width, vipc_client.height, vipc_client.stride, vipc_client.uv_offset)
+  jpeg_write('/data/openpilot/billy.jpg', img)
+
 
 def photo():
   output_path = talk(1)
@@ -62,6 +70,8 @@ def photo():
   send_body_status(1)
   time.sleep(6.7)
   send_body_status(0)
+  take_snapshot()
+
   return BillyState.IDLE
 
 def joke():
@@ -97,6 +107,9 @@ billy_functions = {
 
 if __name__ == "__main__":
   billy_state = BillyState.PHOTO
+
+  if not vipc_client.is_connected():
+    vipc_client.connect(True)
 
   while True:
     print(billy_state)
