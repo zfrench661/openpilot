@@ -20,14 +20,18 @@ def get_control_command(x, y):
     return dat
 
 def asleep_face_msg():
-    dat = messaging.new_message('bodyFace')
-    dat.bodyFace = log.BodyFace.sleep
-    return dat 
+    # TODO doesn't work, return None for now
+    return None
+    # dat = messaging.new_message('bodyFace')
+    # dat.bodyFace = log.BodyFace.sleep
+    # return dat 
 
 def awake_face_msg():
-    dat = messaging.new_message('bodyFace')
-    dat.bodyFace = log.BodyFace.awake
-    return dat 
+    # TODO doesn't work, return None for now
+    return None
+    # dat = messaging.new_message('bodyFace')
+    # dat.bodyFace = log.BodyFace.awake
+    # return dat 
 
 {'label': 'person', 'location': {'height': 44.655364990234375, 'width': 21.4017333984375, 'x': 279.86962890625, 'y': 81.7782211303711}, 'score': 0.7005926966667175}
 
