@@ -7,8 +7,9 @@ import multiprocessing
 import cereal.messaging as messaging
 from cereal.visionipc import VisionIpcClient, VisionStreamType
 from system.camerad.snapshot.snapshot import extract_image, jpeg_write
+from tools.joystick.billy.dance import bodi_dance
 
-pm = messaging.PubMaster(['bodyStatus'])
+pm = messaging.PubMaster(['bodyStatus', 'testJoystick'])
 vipc_client = VisionIpcClient("camerad", VisionStreamType.VISION_STREAM_DRIVER, True)
 
 class BillyState(Enum):
@@ -97,7 +98,7 @@ def song():
 
   p = multiprocessing.Process(target=play_song, args=())
   p.start()
-  time.sleep(8)
+  bodi_dance(pm)
   p.join()
 
   return BillyState.STOPPED
