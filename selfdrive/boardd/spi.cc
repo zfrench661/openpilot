@@ -158,15 +158,20 @@ int PandaSpiHandle::control_read(uint8_t request, uint16_t param1, uint16_t para
 int PandaSpiHandle::bulk_write(unsigned char endpoint, unsigned char* data, int length, unsigned int timeout) {
   return bulk_transfer(endpoint, data, length, NULL, 0, timeout);
 }
+
 int PandaSpiHandle::bulk_read(unsigned char endpoint, unsigned char* data, int length, unsigned int timeout) {
   return bulk_transfer(endpoint, NULL, 0, data, length, timeout);
 }
 
+int count = 0;
+double mt = 0;
 int PandaSpiHandle::bulk_transfer(uint8_t endpoint, uint8_t *tx_data, uint16_t tx_len, uint8_t *rx_data, uint16_t rx_len, unsigned int timeout) {
-  const int xfer_size = 0x40 * 15;
+  //const int xfer_size = 0x40 * 15;
+  const int xfer_size = 0x40 * 31;
 
   int ret = 0;
   uint16_t length = (tx_data != NULL) ? tx_len : rx_len;
+  double st = millis_since_boot();
   for (int i = 0; i < (int)std::ceil((float)length / xfer_size); i++) {
     int d;
     if (tx_data != NULL) {
@@ -185,6 +190,14 @@ int PandaSpiHandle::bulk_transfer(uint8_t endpoint, uint8_t *tx_data, uint16_t t
 
     ret += d;
     if ((rx_data != NULL) && d < xfer_size) {
+      double et = millis_since_boot() - st;
+      if (count > 500) {
+        count = 0;
+        mt = et;
+      }
+      mt = std::max(et, mt);
+      count++;
+      //LOGE("xfer i=%d, len %6d, %5.2f / %5.2f, %2d -> %2d", i+1, ret, et, mt, (int)std::ceil((float)ret / 1024), (int)std::ceil((float)ret / 2048));
       break;
     }
   }
@@ -225,7 +238,9 @@ int PandaSpiHandle::spi_transfer_retry(uint8_t endpoint, uint8_t *tx_data, uint1
   bool timed_out = false;
   double start_time = millis_since_boot();
 
+  int tries = 0;
   do {
+    tries++;
     ret = spi_transfer(endpoint, tx_data, tx_len, rx_data, max_rx_len, timeout);
 
     if (ret < 0) {
@@ -265,7 +280,9 @@ int PandaSpiHandle::wait_for_ack(uint8_t ack, uint8_t tx, unsigned int timeout, 
   };
   tx_buf[0] = tx;
 
+  int tries = 0;
   while (true) {
+    tries++;
     int ret = util::safe_ioctl(spi_fd, SPI_IOC_MESSAGE(1), &transfer);
     if (ret < 0) {
       LOGE("SPI: failed to send ACK request");
@@ -288,6 +305,8 @@ int PandaSpiHandle::wait_for_ack(uint8_t ack, uint8_t tx, unsigned int timeout, 
     // backoff
     transfer.delay_usecs = std::clamp(transfer.delay_usecs*2, 10, 250);
   }
+
+  //if (tries > 1) LOGE("tries %d", tries);
 
   return 0;
 }
