@@ -120,27 +120,27 @@
     <name>DestinationWidget</name>
     <message>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>住家</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation>工作</translation>
     </message>
     <message>
         <source>No destination set</source>
-        <translation type="unfinished"></translation>
+        <translation>尚未設定目的地</translation>
     </message>
     <message>
         <source>No %1 location set</source>
-        <translation type="unfinished"></translation>
+        <translation>尚未設定 %1 的位置</translation>
     </message>
     <message>
         <source>home</source>
-        <translation type="unfinished"></translation>
+        <translation>住家</translation>
     </message>
     <message>
         <source>work</source>
-        <translation type="unfinished"></translation>
+        <translation>工作</translation>
     </message>
 </context>
 <context>
@@ -385,11 +385,11 @@
     <name>MapSettings</name>
     <message>
         <source>NAVIGATION</source>
-        <translation type="unfinished"></translation>
+        <translation>導航</translation>
     </message>
     <message>
         <source>Manage at connect.comma.ai</source>
-        <translation type="unfinished"></translation>
+        <translation>請在 connect.comma.ai 上進行管理</translation>
     </message>
 </context>
 <context>
@@ -437,7 +437,7 @@
     <name>OffroadAlert</name>
     <message>
         <source>Immediately connect to the internet to check for updates. If you do not connect to the internet, openpilot won&apos;t engage in %1</source>
-        <translation>請立即連接網路檢查更新。如果不連接網路，openpilot 將在 %1 後便無法使用。</translation>
+        <translation>請立即連接網路檢查更新。如果不連接網路，openpilot 將在 %1 後便無法使用</translation>
     </message>
     <message>
         <source>Connect to internet to check for updates. openpilot won&apos;t automatically start until it connects to internet to check for updates.</source>
@@ -487,7 +487,7 @@
     </message>
     <message>
         <source>Device temperature too high. System cooling down before starting. Current internal component temperature: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>設備溫度過高。系統正在冷卻中，等冷卻完畢後才會啟動。目前內部組件溫度：%1</translation>
     </message>
 </context>
 <context>
@@ -554,12 +554,16 @@
         <translation>遠程訪問</translation>
     </message>
     <message>
-        <source>1 year of storage</source>
-        <translation>一年的雲端行車記錄</translation>
+        <source>24/7 LTE connectivity</source>
+        <translation>24/7 LTE 連線</translation>
     </message>
     <message>
-        <source>Developer perks</source>
-        <translation>開發者福利</translation>
+        <source>Turn-by-turn navigation</source>
+        <translation>導航功能</translation>
+    </message>
+    <message>
+        <source>1 year of drive storage</source>
+        <translation>一年的行駛記錄儲存空間</translation>
     </message>
 </context>
 <context>
@@ -1082,10 +1086,6 @@ This may take up to a minute.</source>
         <translation>openpilot 縱向控制可能會在未來的更新中提供。</translation>
     </message>
     <message>
-        <source>Enable experimental longitudinal control to allow Experimental mode.</source>
-        <translation>啟用實驗性縱向控制以使用實驗模式。</translation>
-    </message>
-    <message>
         <source>openpilot Longitudinal Control (Alpha)</source>
         <translation>openpilot 縱向控制 (Alpha 版)</translation>
     </message>
@@ -1120,6 +1120,18 @@ This may take up to a minute.</source>
     <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>在正式 (release) 版以外的分支上可以測試 openpilot 縱向控制的 Alpha 版本，以及實驗模式。</translation>
+    </message>
+    <message>
+        <source>Navigate on openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When navigation has a destination, openpilot will input the map information into the model. This generally improves behavior and allows openpilot to keep left or right appropriately at forks/exits and take turns. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
