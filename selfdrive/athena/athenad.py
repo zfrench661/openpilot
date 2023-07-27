@@ -34,7 +34,7 @@ from cereal import log
 from cereal.services import service_list
 from common.api import Api
 from common.basedir import PERSIST
-from common.file_helpers import CallbackReader
+# from common.file_helpers import CallbackReader
 from common.params import Params
 from common.realtime import sec_since_boot, set_core_affinity
 from system.hardware import HARDWARE, PC, AGNOS
@@ -299,16 +299,16 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
     if compress:
       cloudlog.event("athena.upload_handler.compress", fn=path, fn_orig=upload_item.path)
       compressed = bz2.compress(f.read())
-      size = len(compressed)
+      # size = len(compressed)
       data = io.BytesIO(compressed)
     else:
-      size = os.fstat(f.fileno()).st_size
+      # size = os.fstat(f.fileno()).st_size
       data = f
 
-    response = requests.put(upload_item.url,
-                            data=CallbackReader(data, callback, size) if callback else data,
-                            headers={**upload_item.headers, 'Content-Length': str(size)},
-                            timeout=30)
+    # response = requests.put(upload_item.url,
+    #                         data=CallbackReader(data, callback, size) if callback else data,
+    #                         headers={**upload_item.headers, 'Content-Length': str(size)},
+    #                         timeout=30)
 
     if compress:
       del data
@@ -316,7 +316,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
 
   print("done")
   gc.collect()
-  return response
+  # return response
 
 # security: user should be able to request any message from their car
 @dispatcher.add_method
