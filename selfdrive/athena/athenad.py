@@ -310,7 +310,8 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
                         headers={**upload_item.headers, 'Content-Length': str(size)},
                         timeout=30)
 
-    del data
+    if compress:
+      del compressed
 
   print("done")
   gc.collect()
