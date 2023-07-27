@@ -304,12 +304,13 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
       size = os.fstat(f.fileno()).st_size
       data = f
 
-    return requests.put(upload_item.url,
+    response = requests.put(upload_item.url,
                         data=CallbackReader(data, callback, size) if callback else data,
                         headers={**upload_item.headers, 'Content-Length': str(size)},
                         timeout=30)
 
   print("done")
+  return response
 
 # security: user should be able to request any message from their car
 @dispatcher.add_method
