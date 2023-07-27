@@ -9,7 +9,7 @@ import json
 import os
 import queue
 import random
-import select
+# import select
 import socket
 import subprocess
 import sys
@@ -18,12 +18,13 @@ import threading
 import time
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime
-from functools import partial
+# from functools import partial
 from queue import Queue
 from typing import BinaryIO, Callable, Dict, List, Optional, Set, Union, cast
 
 import requests
 from jsonrpc import JSONRPCResponseManager, dispatcher
+from memory_profiler import profile
 from websocket import (ABNF, WebSocket, WebSocketException, WebSocketTimeoutException,
                        create_connection)
 
@@ -122,6 +123,7 @@ class UploadQueueCache:
   params = Params()
 
   @staticmethod
+  @profile
   def initialize(upload_queue: Queue[UploadItem]) -> None:
     try:
       upload_queue_json = UploadQueueCache.params.get("AthenadUploadQueue")
@@ -132,6 +134,7 @@ class UploadQueueCache:
       cloudlog.exception("athena.UploadQueueCache.initialize.exception")
 
   @staticmethod
+  @profile
   def cache(upload_queue: Queue[UploadItem]) -> None:
     try:
       queue: List[Optional[UploadItem]] = list(upload_queue.queue)
@@ -171,8 +174,9 @@ def handle_long_poll(ws: WebSocket, exit_event: Optional[threading.Event]) -> No
       thread.join()
 
 
+@profile
 def jsonrpc_handler(end_event: threading.Event) -> None:
-  dispatcher["startLocalProxy"] = partial(startLocalProxy, end_event)
+  # dispatcher["startLocalProxy"] = partial(startLocalProxy, end_event)
   while not end_event.is_set():
     try:
       data = recv_queue.get(timeout=1)
@@ -191,6 +195,7 @@ def jsonrpc_handler(end_event: threading.Event) -> None:
       send_queue.put_nowait(json.dumps({"error": str(e)}))
 
 
+@profile
 def retry_upload(tid: int, end_event: threading.Event, increase_count: bool = True) -> None:
   item = cur_upload_items[tid]
   if item is not None and item.retry_count < MAX_RETRY_COUNT:
@@ -213,6 +218,7 @@ def retry_upload(tid: int, end_event: threading.Event, increase_count: bool = Tr
         break
 
 
+@profile
 def upload_handler(end_event: threading.Event) -> None:
   sm = messaging.SubMaster(['deviceState'])
   tid = threading.get_ident()
@@ -280,6 +286,7 @@ def upload_handler(end_event: threading.Event) -> None:
       cloudlog.exception("athena.upload_handler.exception")
 
 
+@profile
 def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> requests.Response:
   path = upload_item.path
   compress = False
@@ -308,6 +315,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
 
 # security: user should be able to request any message from their car
 @dispatcher.add_method
+@profile
 def getMessage(service: str, timeout: int = 1000) -> Dict:
   if service is None or service not in service_list:
     raise Exception("invalid service")
@@ -323,6 +331,7 @@ def getMessage(service: str, timeout: int = 1000) -> Dict:
 
 
 @dispatcher.add_method
+@profile
 def getVersion() -> Dict[str, str]:
   return {
     "version": get_version(),
@@ -333,6 +342,7 @@ def getVersion() -> Dict[str, str]:
 
 
 @dispatcher.add_method
+@profile
 def setNavDestination(latitude: int = 0, longitude: int = 0, place_name: Optional[str] = None, place_details: Optional[str] = None) -> Dict[str, int]:
   destination = {
     "latitude": latitude,
@@ -345,6 +355,7 @@ def setNavDestination(latitude: int = 0, longitude: int = 0, place_name: Optiona
   return {"success": 1}
 
 
+@profile
 def scan_dir(path: str, prefix: str) -> List[str]:
   files = []
   # only walk directories that match the prefix
@@ -365,11 +376,13 @@ def scan_dir(path: str, prefix: str) -> List[str]:
   return files
 
 @dispatcher.add_method
+@profile
 def listDataDirectory(prefix='') -> List[str]:
   return scan_dir(ROOT, prefix)
 
 
 @dispatcher.add_method
+@profile
 def reboot() -> Dict[str, int]:
   sock = messaging.sub_sock("deviceState", timeout=1000)
   ret = messaging.recv_one(sock)
@@ -386,6 +399,7 @@ def reboot() -> Dict[str, int]:
 
 
 @dispatcher.add_method
+@profile
 def uploadFileToUrl(fn: str, url: str, headers: Dict[str, str]) -> UploadFilesToUrlResponse:
   # this is because mypy doesn't understand that the decorator doesn't change the return type
   response: UploadFilesToUrlResponse = uploadFilesToUrls([{
@@ -397,6 +411,7 @@ def uploadFileToUrl(fn: str, url: str, headers: Dict[str, str]) -> UploadFilesTo
 
 
 @dispatcher.add_method
+@profile
 def uploadFilesToUrls(files_data: List[UploadFileDict]) -> UploadFilesToUrlResponse:
   files = map(UploadFile.from_dict, files_data)
 
@@ -440,12 +455,14 @@ def uploadFilesToUrls(files_data: List[UploadFileDict]) -> UploadFilesToUrlRespo
 
 
 @dispatcher.add_method
+@profile
 def listUploadQueue() -> List[UploadItemDict]:
   items = list(upload_queue.queue) + list(cur_upload_items.values())
   return [asdict(i) for i in items if (i is not None) and (i.id not in cancelled_uploads)]
 
 
 @dispatcher.add_method
+@profile
 def cancelUpload(upload_id: Union[str, List[str]]) -> Dict[str, Union[int, str]]:
   if not isinstance(upload_id, list):
     upload_id = [upload_id]
@@ -460,11 +477,13 @@ def cancelUpload(upload_id: Union[str, List[str]]) -> Dict[str, Union[int, str]]
 
 
 @dispatcher.add_method
+@profile
 def primeActivated(activated: bool) -> Dict[str, int]:
   return {"success": 1}
 
 
 @dispatcher.add_method
+@profile
 def setBandwithLimit(upload_speed_kbps: int, download_speed_kbps: int) -> Dict[str, Union[int, str]]:
   if not AGNOS:
     return {"success": 0, "error": "only supported on AGNOS"}
@@ -476,40 +495,41 @@ def setBandwithLimit(upload_speed_kbps: int, download_speed_kbps: int) -> Dict[s
     return {"success": 0, "error": "failed to set limit", "stdout": e.stdout, "stderr": e.stderr}
 
 
-def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local_port: int) -> Dict[str, int]:
-  try:
-    if local_port not in LOCAL_PORT_WHITELIST:
-      raise Exception("Requested local port not whitelisted")
+# def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local_port: int) -> Dict[str, int]:
+#   try:
+#     if local_port not in LOCAL_PORT_WHITELIST:
+#       raise Exception("Requested local port not whitelisted")
 
-    cloudlog.debug("athena.startLocalProxy.starting")
+#     cloudlog.debug("athena.startLocalProxy.starting")
 
-    dongle_id = Params().get("DongleId").decode('utf8')
-    identity_token = Api(dongle_id).get_token()
-    ws = create_connection(remote_ws_uri,
-                           cookie="jwt=" + identity_token,
-                           enable_multithread=True)
+#     dongle_id = Params().get("DongleId").decode('utf8')
+#     identity_token = Api(dongle_id).get_token()
+#     ws = create_connection(remote_ws_uri,
+#                            cookie="jwt=" + identity_token,
+#                            enable_multithread=True)
 
-    ssock, csock = socket.socketpair()
-    local_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    local_sock.connect(('127.0.0.1', local_port))
-    local_sock.setblocking(False)
+#     ssock, csock = socket.socketpair()
+#     local_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     local_sock.connect(('127.0.0.1', local_port))
+#     local_sock.setblocking(False)
 
-    proxy_end_event = threading.Event()
-    threads = [
-      threading.Thread(target=ws_proxy_recv, args=(ws, local_sock, ssock, proxy_end_event, global_end_event)),
-      threading.Thread(target=ws_proxy_send, args=(ws, local_sock, csock, proxy_end_event))
-    ]
-    for thread in threads:
-      thread.start()
+#     proxy_end_event = threading.Event()
+#     threads = [
+#       threading.Thread(target=ws_proxy_recv, args=(ws, local_sock, ssock, proxy_end_event, global_end_event)),
+#       threading.Thread(target=ws_proxy_send, args=(ws, local_sock, csock, proxy_end_event))
+#     ]
+#     for thread in threads:
+#       thread.start()
 
-    cloudlog.debug("athena.startLocalProxy.started")
-    return {"success": 1}
-  except Exception as e:
-    cloudlog.exception("athenad.startLocalProxy.exception")
-    raise e
+#     cloudlog.debug("athena.startLocalProxy.started")
+#     return {"success": 1}
+#   except Exception as e:
+#     cloudlog.exception("athenad.startLocalProxy.exception")
+#     raise e
 
 
 @dispatcher.add_method
+@profile
 def getPublicKey() -> Optional[str]:
   if not os.path.isfile(PERSIST + '/comma/id_rsa.pub'):
     return None
@@ -519,37 +539,44 @@ def getPublicKey() -> Optional[str]:
 
 
 @dispatcher.add_method
+@profile
 def getSshAuthorizedKeys() -> str:
   return Params().get("GithubSshKeys", encoding='utf8') or ''
 
 
 @dispatcher.add_method
+@profile
 def getGithubUsername() -> str:
   return Params().get("GithubUsername", encoding='utf8') or ''
 
 
 @dispatcher.add_method
+@profile
 def getSimInfo():
   return HARDWARE.get_sim_info()
 
 
 @dispatcher.add_method
+@profile
 def getNetworkType():
   return HARDWARE.get_network_type()
 
 
 @dispatcher.add_method
+@profile
 def getNetworkMetered() -> bool:
   network_type = HARDWARE.get_network_type()
   return HARDWARE.get_network_metered(network_type)
 
 
 @dispatcher.add_method
+@profile
 def getNetworks():
   return HARDWARE.get_networks()
 
 
 @dispatcher.add_method
+@profile
 def takeSnapshot() -> Optional[Union[str, Dict[str, str]]]:
   from system.camerad.snapshot.snapshot import jpeg_write, snapshot
   ret = snapshot()
@@ -649,6 +676,7 @@ def log_handler(end_event: threading.Event) -> None:
       cloudlog.exception("athena.log_handler.exception")
 
 
+@profile
 def stat_handler(end_event: threading.Event) -> None:
   while not end_event.is_set():
     last_scan = 0
@@ -675,50 +703,51 @@ def stat_handler(end_event: threading.Event) -> None:
     time.sleep(0.1)
 
 
-def ws_proxy_recv(ws: WebSocket, local_sock: socket.socket, ssock: socket.socket, end_event: threading.Event, global_end_event: threading.Event) -> None:
-  while not (end_event.is_set() or global_end_event.is_set()):
-    try:
-      data = ws.recv()
-      local_sock.sendall(data)
-    except WebSocketTimeoutException:
-      pass
-    except Exception:
-      cloudlog.exception("athenad.ws_proxy_recv.exception")
-      break
+# def ws_proxy_recv(ws: WebSocket, local_sock: socket.socket, ssock: socket.socket, end_event: threading.Event, global_end_event: threading.Event) -> None:
+#   while not (end_event.is_set() or global_end_event.is_set()):
+#     try:
+#       data = ws.recv()
+#       local_sock.sendall(data)
+#     except WebSocketTimeoutException:
+#       pass
+#     except Exception:
+#       cloudlog.exception("athenad.ws_proxy_recv.exception")
+#       break
 
-  cloudlog.debug("athena.ws_proxy_recv closing sockets")
-  ssock.close()
-  local_sock.close()
-  cloudlog.debug("athena.ws_proxy_recv done closing sockets")
+#   cloudlog.debug("athena.ws_proxy_recv closing sockets")
+#   ssock.close()
+#   local_sock.close()
+#   cloudlog.debug("athena.ws_proxy_recv done closing sockets")
 
-  end_event.set()
-
-
-def ws_proxy_send(ws: WebSocket, local_sock: socket.socket, signal_sock: socket.socket, end_event: threading.Event) -> None:
-  while not end_event.is_set():
-    try:
-      r, _, _ = select.select((local_sock, signal_sock), (), ())
-      if r:
-        if r[0].fileno() == signal_sock.fileno():
-          # got end signal from ws_proxy_recv
-          end_event.set()
-          break
-        data = local_sock.recv(4096)
-        if not data:
-          # local_sock is dead
-          end_event.set()
-          break
-
-        ws.send(data, ABNF.OPCODE_BINARY)
-    except Exception:
-      cloudlog.exception("athenad.ws_proxy_send.exception")
-      end_event.set()
-
-  cloudlog.debug("athena.ws_proxy_send closing sockets")
-  signal_sock.close()
-  cloudlog.debug("athena.ws_proxy_send done closing sockets")
+#   end_event.set()
 
 
+# def ws_proxy_send(ws: WebSocket, local_sock: socket.socket, signal_sock: socket.socket, end_event: threading.Event) -> None:
+#   while not end_event.is_set():
+#     try:
+#       r, _, _ = select.select((local_sock, signal_sock), (), ())
+#       if r:
+#         if r[0].fileno() == signal_sock.fileno():
+#           # got end signal from ws_proxy_recv
+#           end_event.set()
+#           break
+#         data = local_sock.recv(4096)
+#         if not data:
+#           # local_sock is dead
+#           end_event.set()
+#           break
+
+#         ws.send(data, ABNF.OPCODE_BINARY)
+#     except Exception:
+#       cloudlog.exception("athenad.ws_proxy_send.exception")
+#       end_event.set()
+
+#   cloudlog.debug("athena.ws_proxy_send closing sockets")
+#   signal_sock.close()
+#   cloudlog.debug("athena.ws_proxy_send done closing sockets")
+
+
+@profile
 def ws_recv(ws: WebSocket, end_event: threading.Event) -> None:
   last_ping = int(sec_since_boot() * 1e9)
   while not end_event.is_set():
@@ -741,6 +770,7 @@ def ws_recv(ws: WebSocket, end_event: threading.Event) -> None:
       end_event.set()
 
 
+@profile
 def ws_send(ws: WebSocket, end_event: threading.Event) -> None:
   while not end_event.is_set():
     try:
