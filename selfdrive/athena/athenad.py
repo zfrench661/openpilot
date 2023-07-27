@@ -452,7 +452,6 @@ def uploadFilesToUrls(files_data: List[UploadFileDict]) -> UploadFilesToUrlRespo
 
 
 @dispatcher.add_method
-@profile
 def listUploadQueue() -> List[UploadItemDict]:
   items = list(upload_queue.queue) + list(cur_upload_items.values())
   return [asdict(i) for i in items if (i is not None) and (i.id not in cancelled_uploads)]
