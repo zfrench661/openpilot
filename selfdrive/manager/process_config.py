@@ -3,7 +3,7 @@ import os
 from cereal import car
 from common.params import Params
 from system.hardware import PC, TICI
-from selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
+from selfdrive.manager.process import PythonProcess, NativeProcess  #, DaemonProcess
 
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
@@ -39,7 +39,7 @@ procs = [
   PythonProcess("micd", "system.micd"),
   PythonProcess("timezoned", "system.timezoned", enabled=not PC, offroad=True),
 
-  DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
+  # DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
   NativeProcess("dmonitoringmodeld", "selfdrive/modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM), callback=driverview),
   NativeProcess("encoderd", "system/loggerd", ["./encoderd"]),
   NativeProcess("loggerd", "system/loggerd", ["./loggerd"], onroad=False, callback=logging),
