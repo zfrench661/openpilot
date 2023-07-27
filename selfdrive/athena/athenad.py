@@ -311,6 +311,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
                             timeout=30)
 
     if compress:
+      del data
       del compressed
 
   print("done")
