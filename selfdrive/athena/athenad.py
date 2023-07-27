@@ -306,9 +306,9 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
       data = f
 
     response = requests.put(upload_item.url,
-                        data=CallbackReader(data, callback, size) if callback else data,
-                        headers={**upload_item.headers, 'Content-Length': str(size)},
-                        timeout=30)
+                            data=CallbackReader(data, callback, size) if callback else data,
+                            headers={**upload_item.headers, 'Content-Length': str(size)},
+                            timeout=30)
 
     if compress:
       del compressed
