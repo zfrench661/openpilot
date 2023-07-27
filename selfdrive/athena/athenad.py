@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import bz2
+import gc
 import hashlib
 import io
 import json
@@ -310,6 +311,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
                         timeout=30)
 
   print("done")
+  gc.collect()
   return response
 
 # security: user should be able to request any message from their car
