@@ -34,7 +34,7 @@ from cereal import log
 from cereal.services import service_list
 from common.api import Api
 from common.basedir import PERSIST
-from common.file_helpers import CallbackReader
+# from common.file_helpers import CallbackReader
 from common.params import Params
 from common.realtime import sec_since_boot, set_core_affinity
 from system.hardware import HARDWARE, PC, AGNOS
@@ -306,7 +306,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
       data = f
 
     response = requests.put(upload_item.url,
-                        data=CallbackReader(data, callback, size) if callback else data,
+                        data=data,
                         headers={**upload_item.headers, 'Content-Length': str(size)},
                         timeout=30)
 
@@ -551,13 +551,11 @@ def getSimInfo():
 
 
 @dispatcher.add_method
-@profile
 def getNetworkType():
   return HARDWARE.get_network_type()
 
 
 @dispatcher.add_method
-@profile
 def getNetworkMetered() -> bool:
   network_type = HARDWARE.get_network_type()
   return HARDWARE.get_network_metered(network_type)
