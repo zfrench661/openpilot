@@ -309,6 +309,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
                         headers={**upload_item.headers, 'Content-Length': str(size)},
                         timeout=30)
 
+  print("done")
 
 # security: user should be able to request any message from their car
 @dispatcher.add_method
