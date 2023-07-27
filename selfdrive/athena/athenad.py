@@ -298,8 +298,9 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
     data: BinaryIO
     if compress:
       cloudlog.event("athena.upload_handler.compress", fn=path, fn_orig=upload_item.path)
-      data = io.BytesIO(bz2.compress(f.read()))
-      size = len(data)
+      compressed = bz2.compress(f.read())
+      data = io.BytesIO(compressed)
+      size = len(compressed)
     else:
       size = os.fstat(f.fileno()).st_size
       data = f
@@ -315,7 +316,7 @@ def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> 
 
   print("done")
   gc.collect()
-  # return response
+  return response
 
 # security: user should be able to request any message from their car
 @dispatcher.add_method
