@@ -123,7 +123,6 @@ class UploadQueueCache:
   params = Params()
 
   @staticmethod
-  @profile
   def initialize(upload_queue: Queue[UploadItem]) -> None:
     try:
       upload_queue_json = UploadQueueCache.params.get("AthenadUploadQueue")
@@ -134,7 +133,6 @@ class UploadQueueCache:
       cloudlog.exception("athena.UploadQueueCache.initialize.exception")
 
   @staticmethod
-  @profile
   def cache(upload_queue: Queue[UploadItem]) -> None:
     try:
       queue: List[Optional[UploadItem]] = list(upload_queue.queue)
@@ -174,7 +172,6 @@ def handle_long_poll(ws: WebSocket, exit_event: Optional[threading.Event]) -> No
       thread.join()
 
 
-@profile
 def jsonrpc_handler(end_event: threading.Event) -> None:
   # dispatcher["startLocalProxy"] = partial(startLocalProxy, end_event)
   while not end_event.is_set():
@@ -331,7 +328,6 @@ def getMessage(service: str, timeout: int = 1000) -> Dict:
 
 
 @dispatcher.add_method
-@profile
 def getVersion() -> Dict[str, str]:
   return {
     "version": get_version(),
@@ -382,7 +378,6 @@ def listDataDirectory(prefix='') -> List[str]:
 
 
 @dispatcher.add_method
-@profile
 def reboot() -> Dict[str, int]:
   sock = messaging.sub_sock("deviceState", timeout=1000)
   ret = messaging.recv_one(sock)
@@ -477,13 +472,11 @@ def cancelUpload(upload_id: Union[str, List[str]]) -> Dict[str, Union[int, str]]
 
 
 @dispatcher.add_method
-@profile
 def primeActivated(activated: bool) -> Dict[str, int]:
   return {"success": 1}
 
 
 @dispatcher.add_method
-@profile
 def setBandwithLimit(upload_speed_kbps: int, download_speed_kbps: int) -> Dict[str, Union[int, str]]:
   if not AGNOS:
     return {"success": 0, "error": "only supported on AGNOS"}
@@ -539,13 +532,11 @@ def getPublicKey() -> Optional[str]:
 
 
 @dispatcher.add_method
-@profile
 def getSshAuthorizedKeys() -> str:
   return Params().get("GithubSshKeys", encoding='utf8') or ''
 
 
 @dispatcher.add_method
-@profile
 def getGithubUsername() -> str:
   return Params().get("GithubUsername", encoding='utf8') or ''
 
