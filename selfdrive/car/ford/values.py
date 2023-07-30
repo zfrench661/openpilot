@@ -47,9 +47,10 @@ class CAR:
   F_150_MK14 = "FORD F-150 14TH GEN"
   FOCUS_MK4 = "FORD FOCUS 4TH GEN"
   MAVERICK_MK1 = "FORD MAVERICK 1ST GEN"
+  MUSTANG_MACH_E_MK1 = "FORD MUSTANG MACH-E 1ST GEN"
 
 
-CANFD_CAR = {CAR.F_150_MK14}
+CANFD_CAR = {CAR.F_150_MK14, CAR.MUSTANG_MACH_E_MK1}
 
 
 class RADAR:
@@ -94,6 +95,7 @@ CAR_INFO: Dict[str, Union[CarInfo, List[CarInfo]]] = {
   CAR.F_150_MK14: FordCarInfo("Ford F-150 2023", "Co-Pilot360 Active 2.0"),
   CAR.FOCUS_MK4: FordCarInfo("Ford Focus 2018", "Adaptive Cruise Control with Lane Centering", footnotes=[Footnote.FOCUS]),
   CAR.MAVERICK_MK1: FordCarInfo("Ford Maverick 2022-23", "Co-Pilot360 Assist"),
+  CAR.MUSTANG_MACH_E_MK1: FordCarInfo("Ford Mustang Mach-E 2021-22", "Co-Pilot360 Active 2.0"),
 }
 
 FW_QUERY_CONFIG = FwQueryConfig(
@@ -260,6 +262,18 @@ FW_VERSIONS = {
       b'NZ6A-14C204-PA\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
       b'NZ6A-14C204-ZA\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
       b'PZ6A-14C204-JC\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+    ],
+  },
+  CAR.MUSTANG_MACH_E_MK1: {
+    (Ecu.eps, 0x730, None): [
+    ],
+    (Ecu.abs, 0x760, None): [
+    ],
+    (Ecu.fwdRadar, 0x764, None): [
+    ],
+    (Ecu.fwdCamera, 0x706, None): [
+    ],
+    (Ecu.engine, 0x7E0, None): [
     ],
   },
 }
