@@ -114,6 +114,15 @@ void update_model(UIState *s,
   }
   max_idx = get_path_length_idx(plan_position, max_distance);
   update_line_data(s, plan_position, 0.9, 1.22, &scene.track_vertices, max_idx, false);
+
+  const auto model_conf = model.getConfidence();
+  if (model_conf == cereal::ModelDataV2::ConfidenceClass::RED) {
+    scene.conf_alpha = 0.15;
+  } else {
+    scene.conf_alpha = 1.0;
+  }
+  scene.conf_alpha = scene.conf_alpha * 0.25 + scene.conf_alpha_last * 0.75;
+  scene.conf_alpha_last = scene.conf_alpha;
 }
 
 void update_dmonitoring(UIState *s, const cereal::DriverStateV2::Reader &driverstate, float dm_fade_state, bool is_rhd) {
