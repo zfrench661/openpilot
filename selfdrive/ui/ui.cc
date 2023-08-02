@@ -117,12 +117,16 @@ void update_model(UIState *s,
 
   const auto model_conf = model.getConfidence();
   if (model_conf == cereal::ModelDataV2::ConfidenceClass::RED) {
-    scene.conf_alpha = 0.15;
+    scene.conf_alpha_phase += 0.0942;
+    if (scene.conf_alpha_phase > 6.28) {scene.conf_alpha_phase = 0.0;}
   } else {
-    scene.conf_alpha = 1.0;
+    if (scene.conf_alpha_phase > 0 && scene.conf_alpha_phase < 6.28) {
+      scene.conf_alpha_phase += 0.0942;
+    } else {
+      scene.conf_alpha_phase = 0.0;
+    }
   }
-  scene.conf_alpha = scene.conf_alpha * 0.25 + scene.conf_alpha_last * 0.75;
-  scene.conf_alpha_last = scene.conf_alpha;
+  scene.conf_alpha = 0.3 + (0.5*(1-0.3))*(1 + cos(scene.conf_alpha_phase));
 }
 
 void update_dmonitoring(UIState *s, const cereal::DriverStateV2::Reader &driverstate, float dm_fade_state, bool is_rhd) {

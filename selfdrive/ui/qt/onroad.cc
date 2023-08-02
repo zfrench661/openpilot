@@ -57,6 +57,7 @@ void OnroadWindow::updateState(const UIState &s) {
   }
 
   QColor bgColor = bg_colors[s.status];
+  float bgAlpha = 1.0;
   Alert alert = Alert::get(*(s.sm), s.scene.started_frame);
   alerts->updateAlert(alert);
 
@@ -68,9 +69,14 @@ void OnroadWindow::updateState(const UIState &s) {
 
   nvg->updateState(s);
 
-  if (bg != bgColor) {
+  if (s.status == STATUS_ENGAGED) {
+    bgAlpha = s.scene.conf_alpha;
+  }
+
+  if (bg != bgColor || bg_alpha != bgAlpha) {
     // repaint border
     bg = bgColor;
+    bg_alpha = bgAlpha;
     update();
   }
 }
@@ -113,7 +119,7 @@ void OnroadWindow::offroadTransition(bool offroad) {
 
 void OnroadWindow::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.fillRect(rect(), QColor(bg.red(), bg.green(), bg.blue(), 255));
+  p.fillRect(rect(), QColor(int(bg.red()*bg_alpha), int(bg.green()*bg_alpha), int(bg.blue()*bg_alpha), 255));
 }
 
 // ***** onroad widgets *****
@@ -523,9 +529,9 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
     }
 
   } else {
-    bg.setColorAt(0.0, QColor::fromHslF(148 / 360., 0.94, 0.51, 0.4*scene.conf_alpha));
-    bg.setColorAt(0.5, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.35*scene.conf_alpha));
-    bg.setColorAt(1.0, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.0*scene.conf_alpha));
+    bg.setColorAt(0.0, QColor::fromHslF(148 / 360., 0.94, 0.51, 0.4));
+    bg.setColorAt(0.5, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.35));
+    bg.setColorAt(1.0, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.0));
   }
 
   painter.setBrush(bg);

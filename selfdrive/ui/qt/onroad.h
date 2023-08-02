@@ -144,6 +144,7 @@ private:
   OnroadAlerts *alerts;
   AnnotatedCameraWidget *nvg;
   QColor bg = bg_colors[STATUS_DISENGAGED];
+  float bg_alpha;
   QWidget *map = nullptr;
   QHBoxLayout* split;
 

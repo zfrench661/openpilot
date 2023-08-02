@@ -122,7 +122,7 @@ typedef struct UIScene {
   QPolygonF lane_line_vertices[4];
   QPolygonF road_edge_vertices[2];
   float conf_alpha = 1.0;
-  float conf_alpha_last = 1.0;
+  float conf_alpha_phase = 0.0;
 
   // lead
   QPointF lead_vertices[2];
