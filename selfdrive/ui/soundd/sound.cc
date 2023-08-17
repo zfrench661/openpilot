@@ -56,8 +56,10 @@ void Sound::setAlert(const Alert &alert) {
     // play sound
     if (alert.sound != AudibleAlert::NONE) {
       auto &[s, loops] = sounds[alert.sound];
-      s->setLoopCount(loops);
-      s->play();
+      std::system((std::string("aplay ") + s->source().toLocalFile().toStdString()).c_str());
+      qDebug() << s->source().toLocalFile();
+//      s->setLoopCount(loops);
+//      s->play();
     }
   }
 }
