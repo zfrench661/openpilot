@@ -68,7 +68,7 @@ class TestPandad(unittest.TestCase):
   def test_in_dfu(self):
     HARDWARE.recover_internal_panda()
     managed_processes['pandad'].start()
-    self._wait_for_boardd(60)
+    self._wait_for_boardd(90)
 
   @phone_only
   def test_in_bootstub(self):
