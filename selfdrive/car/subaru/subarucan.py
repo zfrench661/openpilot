@@ -60,7 +60,6 @@ def create_es_distance(packer, es_distance_msg, bus, pcm_cancel_cmd, long_enable
 def create_es_lkas_state(packer, es_lkas_state_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
   values = {s: es_lkas_state_msg[s] for s in [
     "CHECKSUM",
-    "COUNTER",
     "LKAS_Alert_Msg",
     "Signal1",
     "LKAS_ACTIVE",
@@ -122,7 +121,6 @@ def create_es_lkas_state(packer, es_lkas_state_msg, enabled, visual_alert, left_
 def create_es_dashstatus(packer, dashstatus_msg, enabled, long_enabled, long_active, lead_visible):
   values = {s: dashstatus_msg[s] for s in [
     "CHECKSUM",
-    "COUNTER",
     "PCB_Off",
     "LDW_Off",
     "Signal1",
@@ -168,7 +166,6 @@ def create_es_dashstatus(packer, dashstatus_msg, enabled, long_enabled, long_act
 def create_es_brake(packer, es_brake_msg, enabled, brake_value):
   values = {s: es_brake_msg[s] for s in [
     "CHECKSUM",
-    "COUNTER",
     "Signal1",
     "Brake_Pressure",
     "AEB_Status",
@@ -193,7 +190,6 @@ def create_es_brake(packer, es_brake_msg, enabled, brake_value):
 def create_es_status(packer, es_status_msg, long_enabled, long_active, cruise_rpm):
   values = {s: es_status_msg[s] for s in [
     "CHECKSUM",
-    "COUNTER",
     "Signal1",
     "Cruise_Fault",
     "Cruise_RPM",
@@ -217,7 +213,6 @@ def create_es_infotainment(packer, es_infotainment_msg, visual_alert):
   # Filter stock LKAS disabled and Keep hands on steering wheel OFF alerts
   values = {s: es_infotainment_msg[s] for s in [
     "CHECKSUM",
-    "COUNTER",
     "LKAS_State_Infotainment",
     "LKAS_Blue_Lines",
     "Signal1",
