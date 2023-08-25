@@ -5,15 +5,10 @@ lenv = env.Clone()
 lenvCython = envCython.Clone()
 
 libs = [cereal, messaging, common, visionipc, gpucommon,
-        'OpenCL', 'SNPE', 'capnp', 'zmq', 'kj', 'yuv']
-
-config = {
-  'USE_ONNX': False
-}
+        'OpenCL', 'capnp', 'zmq', 'kj', 'yuv']
 
 common_src = [
   "models/commonmodel.cc",
-  "runners/snpemodel.cc",
   "transforms/loadyuv.cc",
   "transforms/transform.cc"
 ]
@@ -27,6 +22,22 @@ thneed_src_qcom = thneed_src_common + ["thneed/thneed_qcom2.cc"]
 thneed_src_pc = thneed_src_common + ["thneed/thneed_pc.cc"]
 thneed_src = thneed_src_qcom if arch == "larch64" else thneed_src_pc
 
+# no SNPE on Mac and ARM Linux
+snpe_lib = []
+if arch != "Darwin" and arch != "aarch64":
+  common_src += ['runners/snpemodel.cc']
+  snpe_lib = ['SNPE']
+  libs += snpe_lib
+
+# fix OpenCL on mac
+cl_lib, cl_framework = [], []
+if arch == "Darwin":
+  cl_framework = ['OpenCL']
+  lenv['FRAMEWORKS'] = cl_framework
+else:
+  cl_lib = ['OpenCL']
+  libs += cl_lib
+
 use_thneed = not GetOption('no_thneed')
 
 if arch == "larch64":
@@ -39,19 +50,9 @@ else:
     common_src += ['runners/onnxmodel.cc']
 
     # tell runners to use onnx
-    config['USE_ONNX'] = True
     lenv['CFLAGS'].append("-DUSE_ONNX_MODEL")
     lenv['CXXFLAGS'].append("-DUSE_ONNX_MODEL")
 
-  if arch == "Darwin":
-    # fix OpenCL
-    del libs[libs.index('OpenCL')]
-    lenv['FRAMEWORKS'] = ['OpenCL']
-
-  if arch == "Darwin" or arch == "aarch64":
-    # no SNPE on Mac and ARM Linux
-    del libs[libs.index('SNPE')]
-    del common_src[common_src.index('runners/snpemodel.cc')]
 
 for pathdef, fn in {'TRANSFORM': 'transforms/transform.cl', 'LOADYUV': 'transforms/loadyuv.cl', 'ONNXRUNNER': 'runners/onnx_runner.py'}.items():
   for xenv in (lenv, lenvCython):
@@ -61,14 +62,8 @@ if (use_thneed and arch == "larch64") or GetOption('pc_thneed'):
   lenvCython['CFLAGS'].append("-DUSE_THNEED")
   lenvCython['CXXFLAGS'].append("-DUSE_THNEED")
 
-common_frameworks = []
-common_libs = envCython["LIBS"] + [gpucommon, common, 'zmq']
-if arch == "Darwin":
-  common_frameworks += ['OpenCL']
-elif arch == "aarch64":
-  common_libs += ['OpenCL']
-else:
-  common_libs += ['OpenCL', 'SNPE']
+common_frameworks = cl_framework
+common_libs = envCython["LIBS"] + [gpucommon, common, *cl_lib, 'zmq']
 
 onnxmodel_lib = lenv.Library('onnxmodel', ['runners/onnxmodel.cc'])
 snpemodel_lib = lenv.Library('snpemodel', ['runners/snpemodel.cc'])
@@ -81,7 +76,7 @@ snpe_rpath = lenvCython['RPATH'] + [snpe_rpath_qcom if arch == "larch64" else sn
 
 lenvCython.Program('runners/runmodel_pyx.so', 'runners/runmodel_pyx.pyx', LIBS=common_libs, FRAMEWORKS=common_frameworks)
 lenvCython.Program('runners/onnxmodel_pyx.so', 'runners/onnxmodel_pyx.pyx', LIBS=[onnxmodel_lib, *common_libs], FRAMEWORKS=common_frameworks)
-lenvCython.Program('runners/snpemodel_pyx.so', 'runners/snpemodel_pyx.pyx', LIBS=[snpemodel_lib, *common_libs], FRAMEWORKS=common_frameworks, RPATH=snpe_rpath)
+lenvCython.Program('runners/snpemodel_pyx.so', 'runners/snpemodel_pyx.pyx', LIBS=[snpemodel_lib, *snpe_lib, *common_libs], FRAMEWORKS=common_frameworks, RPATH=snpe_rpath)
 lenvCython.Program('models/commonmodel_pyx.so', 'models/commonmodel_pyx.pyx', LIBS=[commonmodel_lib, *common_libs], FRAMEWORKS=common_frameworks)
 lenvCython.Program('models/driving_pyx.so', 'models/driving_pyx.pyx', LIBS=[driving_lib, commonmodel_lib, cereal, messaging, *common_libs, 'capnp', 'kj'] + transformations, FRAMEWORKS=common_frameworks)
 
@@ -108,8 +103,3 @@ if (use_thneed and arch == "larch64") or GetOption('pc_thneed'):
   thneed_lib = env.SharedLibrary('thneed', thneed_src, LIBS=[gpucommon, common, 'zmq', 'OpenCL', 'dl'])
   thneedmodel_lib = env.Library('thneedmodel', ['runners/thneedmodel.cc'])
   lenvCython.Program('runners/thneedmodel_pyx.so', 'runners/thneedmodel_pyx.pyx', LIBS=envCython["LIBS"]+[thneedmodel_lib, thneed_lib, gpucommon, common, 'dl', 'zmq', 'OpenCL'])
-
-# write config file
-for k,v in config.items():
-  lenv[k] = v
-lenv.Textfile('config.py', source=['\n'.join(f'{k} = ${k}' for k in config)], varlist=config.keys())

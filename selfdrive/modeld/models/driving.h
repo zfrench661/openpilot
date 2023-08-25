@@ -7,6 +7,8 @@
 #include "common/mat.h"
 #include "common/modeldata.h"
 #include "common/util.h"
+#include "selfdrive/modeld/models/commonmodel.h"
+#include "selfdrive/modeld/runners/run.h"
 
 #ifdef USE_THNEED
   constexpr bool CPP_USE_THNEED = true;
