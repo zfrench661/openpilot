@@ -130,6 +130,9 @@ def main() -> NoReturn:
   first_run = True
   params = Params()
 
+  HARDWARE.recover_internal_panda()
+  time.sleep(5)
+
   while True:
     try:
       count += 1
