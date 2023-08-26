@@ -25,7 +25,7 @@ def create_es_distance(packer, frame, es_distance_msg, bus, pcm_cancel_cmd, long
     "Cruise_Throttle",
     "Signal2",
     "Car_Follow",
-    "Signal3",
+    "Low_Speed_Follow",
     "Cruise_Soft_Disable",
     "Signal7",
     "Cruise_Brake_Active",
