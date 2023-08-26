@@ -5,7 +5,7 @@ lenv = env.Clone()
 lenvCython = envCython.Clone()
 
 libs = [cereal, messaging, common, visionipc, gpucommon,
-        'OpenCL', 'capnp', 'zmq', 'kj', 'yuv']
+        'capnp', 'zmq', 'kj', 'yuv']
 
 common_src = [
   "models/commonmodel.cc",
